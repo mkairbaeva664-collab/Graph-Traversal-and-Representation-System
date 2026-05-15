@@ -2,9 +2,14 @@ import java.util.*;
 
 public class Graph {
     private Map<Integer, List<Vertex>> adjList;
+    private boolean[] marked;
 
     public Graph() {
         this.adjList = new HashMap<>();
+    }
+
+    private void initMarked() {
+        marked = new boolean[1001];
     }
 
     public void addVertex(Vertex v) {
@@ -18,42 +23,48 @@ public class Graph {
     }
 
     public void bfs(int start) {
-        Set<Integer> visited = new HashSet<>();
+        initMarked();
         Queue<Integer> queue = new LinkedList<>();
 
-        visited.add(start);
+        marked[start] = true;
         queue.add(start);
 
         while (!queue.isEmpty()) {
             int current = queue.poll();
-            System.out.println(current + " ");
+            if (adjList.size() <= 10) {
+                System.out.print(current + " ");
+            }
 
             for (Vertex neighbor : adjList.getOrDefault(current, new ArrayList<>())) {
-                if (!visited.contains(neighbor.getId())) {
-                    visited.add(neighbor.getId());
+                int w = neighbor.getId();
+                if (!marked[w]) {
+                    marked[w] = true;
                     queue.add(neighbor.getId());
                 }
             }
         }
-        System.out.println();
+        if (adjList.size() <= 10) System.out.println();
     }
 
     public void dfs(int start) {
-        Set<Integer> visited = new HashSet<>();
-        dfsHelper(start, visited);
-        System.out.println();
-    }
+        if (marked == null) {
+            initMarked();
+        }
 
-    private void dfsHelper(int current, Set<Integer> visited) {
-        visited.add(current);
-        System.out.println(current + " ");
+        marked[start] = true;
 
-        for (Vertex neighbor : adjList.getOrDefault(current, new ArrayList<>())) {
-            if (!visited.contains(neighbor.getId())) {
-                dfsHelper(neighbor.getId(), visited);
+        if (adjList.size() <= 10) {
+            System.out.print(start + " ");
+        }
+
+        for (Vertex neighbor : adjList.getOrDefault(start, new ArrayList<>())) {
+            int w = neighbor.getId();
+            if (!marked[w]) {
+                dfs(w);
             }
         }
     }
+
 
     public void printGraph() {
         for (var entry : adjList.entrySet()) {
